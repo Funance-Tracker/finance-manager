@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
-from model_transaction.transaction import add_new_transaction
-from model_transaction.balance import add_balance
+from model_transaction.transaction import add_new_transaction, write_to_transaction_transactions
+from model_transaction.balance import add_balance, write_to_balance_transactions
 from model_transaction.debt import add_new_debt
 
 class HomePage(ttk.Frame):
@@ -50,12 +50,20 @@ class HomePage(ttk.Frame):
     def add_balance(self):
         amount = float(self.add_balance_amount.get())
         user_id = self.controller.user_info['id']
+
+        # Update balance in the database
         new_balance = add_balance(user_id, amount)
-        if new_balance is not None:
-            self.controller.update_balance_label()
-            messagebox.showinfo("Success", "Balance updated successfully.")
-        else:
+        if new_balance is None:
             messagebox.showerror("Error", "Failed to update balance.")
+            return
+
+        # Write transaction to balance.txt file
+        operation = "Add Balance"
+        write_to_balance_transactions(user_id, amount, operation)
+
+        # Update GUI and show success message
+        self.controller.update_balance_label()
+        messagebox.showinfo("Success", "Balance updated successfully.")
 
     def make_transaction(self):
         amount = float(self.transaction_amount.get())
@@ -64,6 +72,10 @@ class HomePage(ttk.Frame):
         success = add_new_transaction(user_id, amount, description)
         if success:
             self.controller.update_balance_label()
+
+            # Write transaction to transaction file
+            write_to_transaction_transactions(user_id, amount, description)
+
             messagebox.showinfo("Success", "Transaction added successfully.")
         else:
             messagebox.showerror("Error", "Failed to add transaction.")
