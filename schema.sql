@@ -15,6 +15,7 @@ CREATE TABLE IF NOT EXISTS transactions (
     id SERIAL PRIMARY KEY,
     amount FLOAT NOT NULL,
     description VARCHAR(255),
+    transaction_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     user_id INTEGER REFERENCES users(id) ON DELETE CASCADE
 );
 
@@ -23,5 +24,6 @@ CREATE TABLE IF NOT EXISTS debts (
     id SERIAL PRIMARY KEY,
     amount FLOAT NOT NULL,
     description VARCHAR(255),
+    debt_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     user_id INTEGER REFERENCES users(id) ON DELETE CASCADE
 );
