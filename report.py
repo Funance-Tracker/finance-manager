@@ -1,7 +1,6 @@
 import csv
-from tkinter import filedialog, messagebox
 import tkinter as tk
-from tkinter import ttk
+from tkinter import ttk, filedialog, messagebox
 from PostgresDB.postgres_db import PostgresDB
 
 def fetch_transactions(user_id):
@@ -10,8 +9,8 @@ def fetch_transactions(user_id):
         connection = db.get_connection()
         cur = connection.cursor()
 
-        # Execute a query to fetch transactions for the specified user
-        cur.execute("SELECT amount, description FROM transactions WHERE user_id = %s", (user_id,))
+        # Execute a query to fetch transactions including transaction_date for the specified user
+        cur.execute("SELECT amount, description, transaction_date FROM transactions WHERE user_id = %s", (user_id,))
 
         # Retrieve the results
         transactions = cur.fetchall()
@@ -28,7 +27,7 @@ def fetch_transactions(user_id):
         return []
 
 def calculate_total(transactions):
-    return sum(amount for amount, _ in transactions)
+    return sum(amount for amount, _, _ in transactions)
 
 def display_transactions_page(user_id, root):
     transactions = fetch_transactions(user_id)
@@ -37,17 +36,18 @@ def display_transactions_page(user_id, root):
     # Create a new window for displaying transactions
     report_window = tk.Toplevel(root)
     report_window.title("Transaction Report")
-    report_window.geometry("600x400")
+    report_window.geometry("800x600")
 
     # Create the Treeview for transactions
-    tree = ttk.Treeview(report_window, columns=("Amount", "Description"), show="headings")
+    tree = ttk.Treeview(report_window, columns=("Amount", "Description", "Transaction Date"), show="headings")
     tree.heading("Amount", text="Amount")
     tree.heading("Description", text="Description")
+    tree.heading("Transaction Date", text="Transaction Date")
     tree.pack(fill=tk.BOTH, expand=True)
 
     # Insert transactions into the Treeview
-    for amount, description in transactions:
-        tree.insert("", "end", values=(amount, description))
+    for amount, description, transaction_date in transactions:
+        tree.insert("", "end", values=(amount, description, transaction_date))
 
     # Create the total label
     total_label = tk.Label(report_window, text=f"Total: {total}")
@@ -66,8 +66,12 @@ def display_transactions_page(user_id, root):
             if file_path:
                 with open(file_path, mode='w', newline='') as file:
                     writer = csv.writer(file)
-                    writer.writerow(["Amount", "Description"])
-                    writer.writerows(transactions)
+                    # Write header row
+                    writer.writerow(["Amount", "Description", "Transaction Date"])
+                    # Write each transaction row with formatted date
+                    for amount, description, transaction_date in transactions:
+                        formatted_date = transaction_date.strftime('%Y-%m-%d %H:%M')
+                        writer.writerow([amount, description, formatted_date])
                 print(f"Transactions downloaded to {file_path}")
                 messagebox.showinfo("Download Successful", "Transactions downloaded successfully.")
                 return True
@@ -80,3 +84,18 @@ def display_transactions_page(user_id, root):
     # Button to download transactions
     download_button = tk.Button(report_window, text="Download Transactions", command=download_transactions_file)
     download_button.pack(pady=10)
+
+# Example usage:
+if __name__ == "__main__":
+    # Replace with your user_id
+    user_id = 1
+
+    # Create a Tkinter root window (main window)
+    root = tk.Tk()
+    root.title("Transaction App")
+
+    # Example function call to display transaction page
+    display_transactions_page(user_id, root)
+
+    # Start the Tkinter event loop
+    root.mainloop()

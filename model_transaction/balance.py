@@ -12,9 +12,10 @@ def get_balance(user_id):
     """
     db = PostgresDB()
     connection = db.get_connection()
-    cursor = connection.cursor()
+    cursor = None
 
     try:
+        cursor = connection.cursor()
         cursor.execute("SELECT balance FROM users WHERE id = %s;", (user_id,))
         balance = cursor.fetchone()
         return balance[0] if balance else None
@@ -27,7 +28,7 @@ def get_balance(user_id):
         if cursor:
             cursor.close()
         if connection:
-            db.close()
+            connection.close()
 
 
 def add_balance(user_id, amount):
@@ -43,13 +44,14 @@ def add_balance(user_id, amount):
     """
     if amount <= 0:
         print("Amount must be greater than 0")
-        return -1
+        return None
 
     db = PostgresDB()
     connection = db.get_connection()
-    cursor = connection.cursor()
+    cursor = None
 
     try:
+        cursor = connection.cursor()
         cursor.execute("UPDATE users SET balance = balance + %s WHERE id = %s;", (amount, user_id))
         connection.commit()
 
@@ -64,4 +66,4 @@ def add_balance(user_id, amount):
         if cursor:
             cursor.close()
         if connection:
-            db.close()
+            connection.close()
