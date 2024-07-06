@@ -1,6 +1,23 @@
 from PostgresDB.postgres_db import PostgresDB
 from model_transaction.balance import get_balance
 import psycopg2
+from datetime import datetime
+import os
+
+def get_transaction_file_path(user_id):
+    return os.path.join(os.path.dirname(__file__), f'../data/transactions/user_{user_id}_transactions.txt')
+
+def write_to_transaction_transactions(user_id, amount, description):
+    current_datetime = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    transaction_transactions_file = get_transaction_file_path(user_id)
+    
+    try:
+        with open(transaction_transactions_file, 'a') as file:
+            file.write(f"{current_datetime} - Description: {description}, Amount: {amount}\n")
+            print(f"Successfully wrote to {transaction_transactions_file}")
+    except IOError as e:
+        print(f"Error writing to {transaction_transactions_file}: {e}")
+
 
 def add_new_transaction(user_id, amount, description, transaction_date=None):
     """

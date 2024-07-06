@@ -1,4 +1,9 @@
 from PostgresDB.postgres_db import PostgresDB
+from datetime import datetime
+import os
+
+def get_balance_transactions_file(user_id):
+    return os.path.join(os.path.dirname(__file__), f'../data/balances/user_{user_id}_transactions.txt')
 
 def get_balance(user_id):
     """
@@ -29,6 +34,17 @@ def get_balance(user_id):
             cursor.close()
         if connection:
             connection.close()
+
+def write_to_balance_transactions(user_id, amount, operation):
+    current_datetime = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    balance_transactions_file = get_balance_transactions_file(user_id)
+    
+    try:
+        with open(balance_transactions_file, 'a') as file:
+            file.write(f"{current_datetime} - Operation: {operation}, Amount: {amount}\n")
+            print(f"Successfully wrote to {balance_transactions_file}")
+    except IOError as e:
+        print(f"Error writing to {balance_transactions_file}: {e}")
 
 
 def add_balance(user_id, amount):
