@@ -4,6 +4,8 @@ from model_transaction.balance import get_balance
 from GUI.home import HomePage
 from GUI.currency_convert import CurrencyConvertPage
 from GUI.files_reader import FilesReaderPage
+from GUI.report import TransactionReportApp
+from GUI.debt_plans import DebtsPlanPage  # Import the DebtsPlanPage class
 
 class Home(tk.Tk):
     def __init__(self, user_info):
@@ -31,7 +33,7 @@ class Home(tk.Tk):
 
         # Create frames for each page
         self.frames = {}
-        for F in (HomePage, CurrencyConvertPage, FilesReaderPage):
+        for F in (HomePage, CurrencyConvertPage, FilesReaderPage, DebtsPlanPage):  # Add DebtsPlanPage
             page_name = F.__name__
             frame = F(parent=self.main_container, controller=self)
             self.frames[page_name] = frame
@@ -56,6 +58,12 @@ class Home(tk.Tk):
         files_button = ttk.Button(nav_frame, text="Files Reader", command=lambda: self.show_frame("FilesReaderPage"))
         files_button.pack(side="left", padx=5)
 
+        report_button = ttk.Button(nav_frame, text="Report", command=self.open_report)
+        report_button.pack(side="left", padx=5)
+        
+        debts_button = ttk.Button(nav_frame, text="Debts Plan", command=lambda: self.show_frame("DebtsPlanPage"))  # Add button for DebtsPlanPage
+        debts_button.pack(side="left", padx=5)
+
         # User info on the right
         user_info_frame = ttk.Frame(header_frame)
         user_info_frame.pack(side="right", padx=10, pady=10)
@@ -66,6 +74,9 @@ class Home(tk.Tk):
         self.balance_label = ttk.Label(user_info_frame, text=f"Balance: ${self.user_info['balance']:.2f}")
         self.balance_label.pack(side="right", padx=5)
 
+    def open_report(self):
+        TransactionReportApp(self.user_info['id'])
+
     def update_balance_label(self):
         self.user_info['balance'] = get_balance(self.user_info['id'])
         self.balance_label.config(text=f"Balance: ${self.user_info['balance']:.2f}")
@@ -73,3 +84,4 @@ class Home(tk.Tk):
     def show_frame(self, page_name):
         frame = self.frames[page_name]
         frame.tkraise()
+
