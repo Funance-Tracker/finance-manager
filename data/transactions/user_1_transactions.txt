@@ -1,0 +1,7 @@
+2024-07-06 22:22:09 - Description: Education, Amount: 7000.0
+2024-07-06 22:23:29 - Description: Category_B, Amount: 150.0
+2024-07-06 22:26:33 - Description: Category_B, Amount: 40.0
+2024-07-06 22:26:39 - Description: Category_B, Amount: 30.0
+2024-07-07 17:22:17 - Description: abc, Amount: 77.0
+2024-07-07 17:22:21 - Description: abc, Amount: 77.0
+2024-07-07 18:21:48 - Description: 11111, Amount: 11.0

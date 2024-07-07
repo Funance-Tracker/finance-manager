@@ -23,8 +23,8 @@ class FinanceManagerApp(tk.Tk):
         main_frame.pack(fill="both", expand=True)
 
         # Introduction text (centered)
-        introduction_label = ttk.Label(main_frame, text="Welcome to Finance Manager!", font=("Arial", 24))
-        introduction_label.pack(pady=50)
+        # introduction_label = ttk.Label(main_frame, text="Welcome to Finance Manager!", font=("Helvetica", 36, "bold"), foreground="#333")
+        # introduction_label.pack(pady=20, side="top", anchor="n")
 
         # Container for login/register forms
         form_container = ttk.Frame(main_frame)
@@ -58,4 +58,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
