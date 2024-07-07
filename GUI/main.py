@@ -64,6 +64,9 @@ class Home(tk.Tk):
         debts_button = ttk.Button(nav_frame, text="Debts Plan", command=lambda: self.show_frame("DebtsPlanPage"))  # Add button for DebtsPlanPage
         debts_button.pack(side="left", padx=5)
 
+        voice_button = ttk.Button(nav_frame, text="Voice", command=lambda: self.show_frame("DebtsPlanPage"))  # Add button for DebtsPlanPage
+        voice_button.pack(side="left", padx=5)
+
         # User info on the right
         user_info_frame = ttk.Frame(header_frame)
         user_info_frame.pack(side="right", padx=10, pady=10)

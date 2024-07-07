@@ -12,6 +12,7 @@ class HomePage(ttk.Frame):
     def __init__(self, parent, controller):
         super().__init__(parent)
         self.controller = controller
+        self.current_canvas = None  # Track the current chart canvas
 
         # Add Balance Form
         add_balance_frame = ttk.LabelFrame(self, text="Add Balance")
@@ -50,16 +51,16 @@ class HomePage(ttk.Frame):
         self.debt_description = ttk.Entry(debt_frame)
         self.debt_description.pack(side="left", padx=5, pady=5)
         ttk.Button(debt_frame, text="Add Debt", command=self.add_debt).pack(side="left", padx=5, pady=5)
-        
+
         # Button to show hourly average balance
-        ttk.Button(self, text="Show transactions Over Time", command=self.show_hourly_average_balance).grid(row=2, column=0, columnspan=2, padx=10, pady=10)
+        ttk.Button(self, text="Show Transactions Over Time", command=self.show_hourly_average_balance).grid(row=2, column=0, columnspan=2, padx=10, pady=10, sticky="ew")
 
         # Button to show added balance over time
-        ttk.Button(self, text="Show Balance Over Time", command=self.show_added_balance_over_time).grid(row=3, column=0, columnspan=2, padx=10, pady=10)
+        ttk.Button(self, text="Show Balance Over Time", command=self.show_added_balance_over_time).grid(row=3, column=0, columnspan=2, padx=10, pady=10, sticky="ew")
 
-        ttk.Button(self, text="Show Balance and Transactions Over Time", command=self.show_balance_and_transactions_over_time).grid(row=5, column=0, columnspan=2, padx=10, pady=10)
+        # Button to show balance and transactions over time
+        ttk.Button(self, text="Show Balance and Transactions Over Time", command=self.show_balance_and_transactions_over_time).grid(row=4, column=0, columnspan=2, padx=10, pady=10, sticky="ew")
 
-        
     def add_balance(self):
         amount = float(self.add_balance_amount.get())
         user_id = self.controller.user_info['id']
@@ -104,6 +105,8 @@ class HomePage(ttk.Frame):
             messagebox.showerror("Error", "Failed to add debt.")
 
     def show_hourly_average_balance(self):
+        self.clear_current_canvas()  # Clear current chart canvas, if any
+
         # Get user_id and balance_file_path
         user_id = self.controller.user_info['id']
         transaction_file_path = self.get_transaction_file_path(user_id)
@@ -119,11 +122,14 @@ class HomePage(ttk.Frame):
             # Embed Matplotlib plot into Tkinter GUI using FigureCanvasTkAgg
             canvas = FigureCanvasTkAgg(fig, master=self)
             canvas.draw()
-            canvas.get_tk_widget().grid(row=4, column=0, columnspan=2, padx=10, pady=10, sticky="nsew")
+            canvas.get_tk_widget().grid(row=5, column=0, columnspan=2, padx=10, pady=10, sticky="ew")
+            self.current_canvas = canvas  # Update current canvas
         else:
             messagebox.showwarning("File Not Found", "Transaction data file not found. No data available for plotting.")
 
     def show_added_balance_over_time(self):
+        self.clear_current_canvas()  # Clear current chart canvas, if any
+
         # Get user_id and balance_file_path
         user_id = self.controller.user_info['id']
         balance_file_path = self.get_balance_file_path(user_id)
@@ -134,24 +140,14 @@ class HomePage(ttk.Frame):
             # Embed Matplotlib plot into Tkinter GUI using FigureCanvasTkAgg
             canvas = FigureCanvasTkAgg(fig, master=self)
             canvas.draw()
-            canvas.get_tk_widget().grid(row=4, column=0, columnspan=2, padx=10, pady=10, sticky="nsew")
+            canvas.get_tk_widget().grid(row=5, column=0, columnspan=2, padx=10, pady=10, sticky="ew")
+            self.current_canvas = canvas  # Update current canvas
         else:
             messagebox.showwarning("File Not Found", "Balance data file not found. No data available for plotting.")
 
-    def get_transaction_file_path(self, user_id):
-        base_directory = os.path.dirname(__file__)  # Get current directory of this script
-        data_directory = os.path.join(base_directory, "..", "data")
-        transactions_directory = os.path.join(data_directory, "transactions")
-        return os.path.join(transactions_directory, f"user_{user_id}_transactions.txt")
-
-    def get_balance_file_path(self, user_id):
-        base_directory = os.path.dirname(__file__)  # Get current directory of this script
-        data_directory = os.path.join(base_directory, "..", "data")
-        balances_directory = os.path.join(data_directory, "balances")
-        return os.path.join(balances_directory, f"user_{user_id}_transactions.txt")
-    
-
     def show_balance_and_transactions_over_time(self):
+        self.clear_current_canvas()  # Clear current chart canvas, if any
+
         # Get user_id, balance_file_path, and transaction_file_path
         user_id = self.controller.user_info['id']
         balance_file_path = self.get_balance_file_path(user_id)
@@ -163,11 +159,14 @@ class HomePage(ttk.Frame):
             # Embed Matplotlib plot into Tkinter GUI using FigureCanvasTkAgg
             canvas = FigureCanvasTkAgg(fig, master=self)
             canvas.draw()
-            canvas.get_tk_widget().grid(row=6, column=0, columnspan=2, padx=10, pady=10, sticky="nsew")
+            canvas.get_tk_widget().grid(row=5, column=0, columnspan=2, padx=10, pady=10, sticky="ew")
+            self.current_canvas = canvas  # Update current canvas
         else:
             messagebox.showwarning("File Not Found", "Data files not found. No data available for plotting.")
 
-    # Helper methods to get file paths
+    def clear_current_canvas(self):
+        if self.current_canvas:
+            self.current_canvas.get_tk_widget().destroy()  # Destroy the current canvas if it exists
 
     def get_transaction_file_path(self, user_id):
         base_directory = os.path.dirname(__file__)  # Get current directory of this script
@@ -180,3 +179,4 @@ class HomePage(ttk.Frame):
         data_directory = os.path.join(base_directory, "..", "data")
         balances_directory = os.path.join(data_directory, "balances")
         return os.path.join(balances_directory, f"user_{user_id}_transactions.txt")
+
