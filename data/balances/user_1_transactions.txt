@@ -1,3 +1,6 @@
 2024-07-04 14:09:57 - Operation: Add Balance, Amount: 100.0
 2024-07-04 14:12:19 - Operation: Add Balance, Amount: 100.0
 2024-07-04 14:25:51 - Operation: Add Balance, Amount: 100.0
+2024-07-06 22:21:51 - Operation: Add Balance, Amount: 10000.0
+2024-07-07 17:22:03 - Operation: Add Balance, Amount: 111.0
+2024-07-07 18:21:41 - Operation: Add Balance, Amount: 44.0

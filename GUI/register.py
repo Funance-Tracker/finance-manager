@@ -9,37 +9,37 @@ class RegisterApp(ttk.Frame):
         self.create_widgets()
 
     def create_widgets(self):
-        label = ttk.Label(self, text="Registration", font=("Arial", 24))
+        label = ttk.Label(self, text="Registration", font=("Helvetica", 24, "bold"), foreground="#333")
         label.pack(pady=10)
 
-        username_label = ttk.Label(self, text="Username:")
+        username_label = ttk.Label(self, text="Username:", font=("Helvetica", 12))
         username_label.pack()
 
-        self.username_entry = ttk.Entry(self, width=30)
+        self.username_entry = ttk.Entry(self, width=30, font=("Helvetica", 12))
         self.username_entry.pack(pady=5)
 
-        email_label = ttk.Label(self, text="Email:")
+        email_label = ttk.Label(self, text="Email:", font=("Helvetica", 12))
         email_label.pack()
 
-        self.email_entry = ttk.Entry(self, width=30)
+        self.email_entry = ttk.Entry(self, width=30, font=("Helvetica", 12))
         self.email_entry.pack(pady=5)
 
-        password_label = ttk.Label(self, text="Password:")
+        password_label = ttk.Label(self, text="Password:", font=("Helvetica", 12))
         password_label.pack()
 
-        self.password_entry = ttk.Entry(self, show="*", width=30)
+        self.password_entry = ttk.Entry(self, show="*", width=30, font=("Helvetica", 12))
         self.password_entry.pack(pady=5)
 
-        confirm_password_label = ttk.Label(self, text="Confirm Password:")
+        confirm_password_label = ttk.Label(self, text="Confirm Password:", font=("Helvetica", 12))
         confirm_password_label.pack()
 
-        self.confirm_password_entry = ttk.Entry(self, show="*", width=30)
+        self.confirm_password_entry = ttk.Entry(self, show="*", width=30, font=("Helvetica", 12))
         self.confirm_password_entry.pack(pady=5)
 
         register_button = ttk.Button(self, text="Register", command=self.register)
         register_button.pack(pady=10)
 
-        login_label = ttk.Label(self, text="Already have an account?")
+        login_label = ttk.Label(self, text="Already have an account?", font=("Helvetica", 10))
         login_label.pack()
 
         login_button = ttk.Button(self, text="Login", command=self.parent.show_login)
