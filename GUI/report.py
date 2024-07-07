@@ -4,6 +4,7 @@ import tkinter as tk
 from tkinter import ttk
 from PostgresDB.postgres_db import PostgresDB
 
+
 class TransactionReportApp(tk.Tk):
     def __init__(self, user_id):
         super().__init__()
