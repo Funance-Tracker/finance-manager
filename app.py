@@ -9,26 +9,16 @@ class FinanceManagerApp(tk.Tk):
 
         self.title("Finance Manager")
 
-        # Center window on screen and set size
-        window_width = 1250
-        window_height = 720
-        screen_width = self.winfo_screenwidth()
-        screen_height = self.winfo_screenheight()
-        x_position = int((screen_width - window_width) / 2)
-        y_position = int((screen_height - window_height) / 2)
-        self.geometry(f"{window_width}x{window_height}+{x_position}+{y_position}")
+        # Maximize the window and keep the title bar and exit button visible
+        self.state('zoomed')
 
         # Create main frame
         main_frame = ttk.Frame(self)
         main_frame.pack(fill="both", expand=True)
 
-        # Introduction text (centered)
-        # introduction_label = ttk.Label(main_frame, text="Welcome to Finance Manager!", font=("Helvetica", 36, "bold"), foreground="#333")
-        # introduction_label.pack(pady=20, side="top", anchor="n")
-
         # Container for login/register forms
         form_container = ttk.Frame(main_frame)
-        form_container.pack(pady=20)
+        form_container.pack(fill="both", expand=True)
 
         # Initially show the login form
         self.show_login()

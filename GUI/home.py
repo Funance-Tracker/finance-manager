@@ -7,59 +7,55 @@ from plotting import plot_daily_average_balance, plot_added_balance_over_time, p
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import os
 
-
 class HomePage(ttk.Frame):
     def __init__(self, parent, controller):
         super().__init__(parent)
+        
         self.controller = controller
         self.current_canvas = None  # Track the current chart canvas
 
-        # Add Balance Form
-        add_balance_frame = ttk.LabelFrame(self, text="Add Balance")
-        add_balance_frame.grid(row=0, column=0, padx=10, pady=10, sticky="ew")
+        # Add Balance Form (takes full width)
+        add_balance_frame = ttk.LabelFrame(self, text="Add Balance", borderwidth=2, relief="groove")
+        add_balance_frame.grid(row=0, column=0, padx=10, pady=10, sticky="ew", columnspan=2)
 
         ttk.Label(add_balance_frame, text="Amount:").pack(side="left", padx=5, pady=5)
         self.add_balance_amount = ttk.Entry(add_balance_frame)
-        self.add_balance_amount.pack(side="left", padx=5, pady=5)
+        self.add_balance_amount.pack(side="left", fill="x", padx=5, pady=5)
         ttk.Button(add_balance_frame, text="Add", command=self.add_balance).pack(side="left", padx=5, pady=5)
 
-        # Make Transaction Form
-        transaction_frame = ttk.LabelFrame(self, text="Make Transaction")
-        transaction_frame.grid(row=0, column=1, padx=10, pady=10, sticky="ew")
+        # Make Transaction Form (takes full width)
+        transaction_frame = ttk.LabelFrame(self, text="Make Transaction", borderwidth=2, relief="groove")
+        transaction_frame.grid(row=1, column=0, padx=10, pady=10, sticky="ew", columnspan=2)
 
         ttk.Label(transaction_frame, text="Amount:").pack(side="left", padx=5, pady=5)
         self.transaction_amount = ttk.Entry(transaction_frame)
-        self.transaction_amount.pack(side="left", padx=5, pady=5)
+        self.transaction_amount.pack(side="left", fill="x", padx=5, pady=5)
 
         ttk.Label(transaction_frame, text="Description:").pack(side="left", padx=5, pady=5)
         self.transaction_description = ttk.Combobox(transaction_frame, values=[
             "Groceries", "Rent", "Utilities", "Entertainment", "Dining", "Travel",
             "Education", "Healthcare", "Insurance", "Miscellaneous"
         ])
-        self.transaction_description.pack(side="left", padx=5, pady=5)
+        self.transaction_description.pack(side="left", fill="x", padx=5, pady=5)
         ttk.Button(transaction_frame, text="Make Transaction", command=self.make_transaction).pack(side="left", padx=5, pady=5)
 
-        # Add Debt Form
-        debt_frame = ttk.LabelFrame(self, text="Add Debt")
-        debt_frame.grid(row=1, column=0, columnspan=2, padx=10, pady=10, sticky="ew")
+        # Add Debt Form (takes full width, on a new row)
+        debt_frame = ttk.LabelFrame(self, text="Add Debt", borderwidth=2, relief="groove")
+        debt_frame.grid(row=2, column=0, padx=10, pady=10, sticky="ew", columnspan=2)
 
         ttk.Label(debt_frame, text="Amount:").pack(side="left", padx=5, pady=5)
         self.debt_amount = ttk.Entry(debt_frame)
-        self.debt_amount.pack(side="left", padx=5, pady=5)
+        self.debt_amount.pack(side="left", fill="x", padx=5, pady=5)
 
         ttk.Label(debt_frame, text="Description:").pack(side="left", padx=5, pady=5)
         self.debt_description = ttk.Entry(debt_frame)
-        self.debt_description.pack(side="left", padx=5, pady=5)
+        self.debt_description.pack(side="left", fill="x", padx=5, pady=5)
         ttk.Button(debt_frame, text="Add Debt", command=self.add_debt).pack(side="left", padx=5, pady=5)
 
-        # Button to show hourly average balance
-        ttk.Button(self, text="Show Transactions Over Time", command=self.show_hourly_average_balance).grid(row=2, column=0, columnspan=2, padx=10, pady=10, sticky="ew")
-
-        # Button to show added balance over time
-        ttk.Button(self, text="Show Balance Over Time", command=self.show_added_balance_over_time).grid(row=3, column=0, columnspan=2, padx=10, pady=10, sticky="ew")
-
-        # Button to show balance and transactions over time
-        ttk.Button(self, text="Show Balance and Transactions Over Time", command=self.show_balance_and_transactions_over_time).grid(row=4, column=0, columnspan=2, padx=10, pady=10, sticky="ew")
+        # Display charts directly
+        self.show_balance_and_transactions_over_time()
+        # self.show_hourly_average_balance()
+        # self.show_added_balance_over_time()
 
     def add_balance(self):
         amount = float(self.add_balance_amount.get())
@@ -122,13 +118,13 @@ class HomePage(ttk.Frame):
             # Embed Matplotlib plot into Tkinter GUI using FigureCanvasTkAgg
             canvas = FigureCanvasTkAgg(fig, master=self)
             canvas.draw()
-            canvas.get_tk_widget().grid(row=5, column=0, columnspan=2, padx=10, pady=10, sticky="ew")
+            canvas.get_tk_widget().grid(row=3, column=0, columnspan=2, padx=10, pady=10, sticky="ew")
             self.current_canvas = canvas  # Update current canvas
         else:
             messagebox.showwarning("File Not Found", "Transaction data file not found. No data available for plotting.")
 
     def show_added_balance_over_time(self):
-        self.clear_current_canvas()  # Clear current chart canvas, if any
+        # self.clear_current_canvas()  # Clear current chart canvas, if any
 
         # Get user_id and balance_file_path
         user_id = self.controller.user_info['id']
@@ -140,13 +136,13 @@ class HomePage(ttk.Frame):
             # Embed Matplotlib plot into Tkinter GUI using FigureCanvasTkAgg
             canvas = FigureCanvasTkAgg(fig, master=self)
             canvas.draw()
-            canvas.get_tk_widget().grid(row=5, column=0, columnspan=2, padx=10, pady=10, sticky="ew")
+            canvas.get_tk_widget().grid(row=4, column=0, columnspan=2, padx=10, pady=10, sticky="ew")
             self.current_canvas = canvas  # Update current canvas
         else:
             messagebox.showwarning("File Not Found", "Balance data file not found. No data available for plotting.")
 
     def show_balance_and_transactions_over_time(self):
-        self.clear_current_canvas()  # Clear current chart canvas, if any
+        # self.clear_current_canvas()  # Clear current chart canvas, if any
 
         # Get user_id, balance_file_path, and transaction_file_path
         user_id = self.controller.user_info['id']
@@ -179,4 +175,3 @@ class HomePage(ttk.Frame):
         data_directory = os.path.join(base_directory, "..", "data")
         balances_directory = os.path.join(data_directory, "balances")
         return os.path.join(balances_directory, f"user_{user_id}_transactions.txt")
-

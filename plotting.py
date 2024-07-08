@@ -1,11 +1,10 @@
 import os
 import matplotlib.pyplot as plt
-from datetime import datetime, timedelta
+from datetime import datetime
 import matplotlib.dates as mdates
 
 def plot_balance_over_time(user_id, data_file_path, plot_title, ylabel, max_balance=None):
     try:
-        # Attempt to open and read the data file
         timestamps = []
         balances = []
 
@@ -17,7 +16,7 @@ def plot_balance_over_time(user_id, data_file_path, plot_title, ylabel, max_bala
                     continue
 
                 ts_str = parts[0].strip()
-                balance_part = float(parts[1].split(': ')[-1].strip())  # Extract balance directly
+                balance_part = float(parts[1].split(': ')[-1].strip())
                 try:
                     ts = datetime.strptime(ts_str, '%Y-%m-%d %H:%M:%S')
                     timestamps.append(ts)
@@ -26,50 +25,41 @@ def plot_balance_over_time(user_id, data_file_path, plot_title, ylabel, max_bala
                     print(f"Skipping line due to parsing error: {line.strip()}")
                     print(f"Error: {e}")
 
-        # Convert timestamps to days
         days = [ts.replace(hour=0, minute=0, second=0, microsecond=0) for ts in timestamps]
 
-        # Create Matplotlib plot with adjusted size
-        fig, ax = plt.subplots(figsize=(8, 4))  # Adjust the size here (width, height)
+        fig, ax = plt.subplots(figsize=(8, 6))
         ax.plot(days, balances, marker='o', linestyle='-', color='blue', linewidth=1.5)
 
-        # Formatting the plot
         ax.set_title(plot_title)
         ax.set_xlabel('Date')
         ax.set_ylabel(ylabel)
         ax.grid(True)
         fig.tight_layout()
 
-        # Customize x-axis date formatting
         ax.xaxis.set_major_locator(mdates.MonthLocator())
         ax.xaxis.set_major_formatter(mdates.DateFormatter('%b %Y'))
 
-        # Set optional y-axis limits based on maximum balance
         if max_balance is not None:
             ax.set_ylim(0, max_balance)
 
-        # Return the figure object
         return fig
 
     except FileNotFoundError:
-        # Handle case where the file is not found
         print(f"{data_file_path} not found.")
         return None
 
-
 def plot_daily_average_balance(user_id, transaction_file_path, max_balance):
-    plot_title = 'Daily transactions for 2024'
+    plot_title = 'Daily Average Balance'
     ylabel = 'Balance'
     return plot_balance_over_time(user_id, transaction_file_path, plot_title, ylabel, max_balance)
 
 def plot_added_balance_over_time(user_id, balance_file_path):
-    plot_title = 'Added Balance for 2024'
+    plot_title = 'Added Balance Over Time'
     ylabel = 'Balance'
     return plot_balance_over_time(user_id, balance_file_path, plot_title, ylabel)
 
 def plot_balance_and_transactions_over_time(user_id, balance_file_path, transaction_file_path):
     try:
-        # Attempt to open and read the balance file
         balance_timestamps = []
         balance_values = []
 
@@ -81,7 +71,7 @@ def plot_balance_and_transactions_over_time(user_id, balance_file_path, transact
                     continue
 
                 ts_str = parts[0].strip()
-                balance_part = float(parts[1].split(': ')[-1].strip())  # Extract balance directly
+                balance_part = float(parts[1].split(': ')[-1].strip())
                 try:
                     ts = datetime.strptime(ts_str, '%Y-%m-%d %H:%M:%S')
                     balance_timestamps.append(ts)
@@ -90,10 +80,8 @@ def plot_balance_and_transactions_over_time(user_id, balance_file_path, transact
                     print(f"Skipping line due to parsing error: {line.strip()}")
                     print(f"Error: {e}")
 
-        # Convert balance timestamps to days
         balance_days = [ts.replace(hour=0, minute=0, second=0, microsecond=0) for ts in balance_timestamps]
 
-        # Attempt to open and read the transaction file
         transaction_timestamps = []
         transaction_values = []
 
@@ -105,19 +93,17 @@ def plot_balance_and_transactions_over_time(user_id, balance_file_path, transact
                     continue
 
                 ts_str = parts[0].strip()
-                amount = float(parts[1].split(': ')[-1].strip())  # Extract amount directly
+                amount = float(parts[1].split(': ')[-1].strip())
                 try:
                     ts = datetime.strptime(ts_str, '%Y-%m-%d %H:%M:%S')
                     transaction_timestamps.append(ts)
-                    transaction_values.append(-amount)  # Use negative amounts for transactions
+                    transaction_values.append(-amount)
                 except ValueError as e:
                     print(f"Skipping line due to parsing error: {line.strip()}")
                     print(f"Error: {e}")
 
-        # Convert transaction timestamps to days
         transaction_days = [ts.replace(hour=0, minute=0, second=0, microsecond=0) for ts in transaction_timestamps]
 
-        # Combine balance and transaction data
         all_days = sorted(set(balance_days + transaction_days))
         combined_balance = []
         combined_transactions = []
@@ -128,35 +114,29 @@ def plot_balance_and_transactions_over_time(user_id, balance_file_path, transact
             combined_balance.append(balance if balance is not None else combined_balance[-1] if combined_balance else 0)
             combined_transactions.append(transaction)
 
-        # Create Matplotlib plot with adjusted size
-        fig, ax1 = plt.subplots(figsize=(12, 4))  # Adjust the size here (width, height)
+        fig, ax1 = plt.subplots(figsize=(12, 4))
 
-        # Plot balance on primary y-axis
         color = 'tab:green'
         ax1.set_xlabel('Date')
         ax1.set_ylabel('Balance', color=color)
         ax1.plot(all_days, combined_balance, marker='o', linestyle='-', color=color, linewidth=1.5)
         ax1.tick_params(axis='y', labelcolor=color)
 
-        # Plot transactions on secondary y-axis
         ax2 = ax1.twinx()
         color = 'tab:red'
         ax2.set_ylabel('Transactions', color=color)
         ax2.plot(all_days, combined_transactions, marker='s', linestyle='-', color=color, linewidth=1.5)
         ax2.tick_params(axis='y', labelcolor=color)
 
-        # Formatting the plot
         ax1.set_title('Balance and Transactions Over Time')
         ax1.grid(True)
         fig.tight_layout()
 
-        # Customize x-axis date formatting
         ax1.xaxis.set_major_locator(mdates.MonthLocator())
         ax1.xaxis.set_major_formatter(mdates.DateFormatter('%b %Y'))
 
         return fig
 
     except FileNotFoundError:
-        # Handle case where the file is not found
         print("Data file not found.")
         return None

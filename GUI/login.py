@@ -10,29 +10,67 @@ class LoginApp(ttk.Frame):
         self.create_widgets()
 
     def create_widgets(self):
-        label = ttk.Label(self, text="Login", font=("Helvetica", 24, "bold"), foreground="#333")
-        label.pack(pady=10)
+        container = ttk.Frame(self)
+        container.pack(fill="both", expand=True, padx=20, pady=20)
 
-        email_label = ttk.Label(self, text="Email:", font=("Helvetica", 12))
-        email_label.pack()
+        # Left side for title and placeholder text
+        title_frame = ttk.Frame(container)
+        title_frame.pack(side="left", fill="both", expand=True, padx=(0, 20), pady=20)
 
-        self.email_entry = ttk.Entry(self, width=30, font=("Helvetica", 12))
-        self.email_entry.pack(pady=5)
+        title_label = ttk.Label(title_frame, text="Finance Manager", font=("Helvetica", 24, "bold"), foreground="#333")
+        title_label.pack(pady=10)
 
-        password_label = ttk.Label(self, text="Password:", font=("Helvetica", 12))
-        password_label.pack()
+        placeholder_text = (
+            "\t        Welcome to the Finance Manager app. \n\n"
+            "\t        Manage your finances efficiently and effectively. \n\n"
+            "\t        Login to get started."
+        )
+        
+        placeholder_label = ttk.Label(title_frame, text=placeholder_text, font=("Helvetica", 12), wraplength=500)
+        placeholder_label.pack(pady=10)
 
-        self.password_entry = ttk.Entry(self, show="*", width=30, font=("Helvetica", 12))
-        self.password_entry.pack(pady=5)
+        # Center the title frame content
+        title_frame.pack_propagate(False)
+        title_frame.configure(width=320, height=540)
 
-        login_button = ttk.Button(self, text="Login", command=self.login)
-        login_button.pack(pady=10)
+        # Center the content in the title frame
+        title_frame.pack(side="left", fill="both", expand=True)
+        for widget in title_frame.winfo_children():
+            widget.pack(anchor="center", pady=(10, 5))
 
-        register_label = ttk.Label(self, text="Don't have an account?", font=("Helvetica", 10))
-        register_label.pack()
+        # Right side for form
+        form_frame = ttk.Frame(container)
+        form_frame.pack(side="right", fill="both", expand=True, padx=20)
 
-        register_button = ttk.Button(self, text="Register", command=self.parent.show_register)
-        register_button.pack(pady=5)
+        email_label = ttk.Label(form_frame, text="Email:", font=("Helvetica", 12))
+        email_label.pack(pady=(10, 5))
+
+        self.email_entry = ttk.Entry(form_frame, width=30, font=("Helvetica", 12))
+        self.email_entry.pack(pady=(5, 10))
+
+        password_label = ttk.Label(form_frame, text="Password:", font=("Helvetica", 12))
+        password_label.pack(pady=(10, 5))
+
+        self.password_entry = ttk.Entry(form_frame, show="*", width=30, font=("Helvetica", 12))
+        self.password_entry.pack(pady=(5, 10))
+
+        login_button = ttk.Button(form_frame, text="Login", command=self.login)
+        login_button.pack(pady=(10, 10))
+
+        register_label = ttk.Label(form_frame, text="Don't have an account?", font=("Helvetica", 10))
+        register_label.pack(pady=(10, 5))
+
+        register_button = ttk.Button(form_frame, text="Register", command=self.parent.show_register)
+        register_button.pack(pady=(5, 10))
+
+        # Center the form frame content
+        form_frame.pack_propagate(False)
+        form_frame.configure(width=600, height=540)
+
+        # Center the content in the form frame
+        form_frame.pack(side="right", fill="both", expand=True)
+        for widget in form_frame.winfo_children():
+            widget.pack(anchor="center", pady=(10, 5))
 
     def login(self):
         email = self.email_entry.get()
