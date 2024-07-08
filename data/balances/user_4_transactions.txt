@@ -53,3 +53,13 @@
 2025-06-23 10:00:00 - Operation: Add Balance, Amount: 370.0
 2025-06-30 10:00:00 - Operation: Add Balance, Amount: 340.0
 2024-07-06 17:27:36 - Operation: Add Balance, Amount: 100.0
+2024-07-07 19:47:13 - Operation: Add Balance, Amount: 1200.0
+2024-07-07 20:59:37 - Operation: Add Balance, Amount: 100.0
+2024-07-07 20:59:41 - Operation: Add Balance, Amount: 100.0
+2024-07-07 20:59:44 - Operation: Add Balance, Amount: 100.0
+2024-07-08 00:04:44 - Operation: Add Balance, Amount: 123.0
+2024-07-08 02:45:44 - Operation: Add Balance, Amount: 123.0
+2024-07-08 02:46:44 - Operation: Add Balance, Amount: 123.0
+2024-07-08 05:42:52 - Operation: Add Balance, Amount: 1000.0
+2024-07-08 12:24:25 - Operation: Add Balance, Amount: 100.0
+2024-07-08 12:48:58 - Operation: Add Balance, Amount: 100.0

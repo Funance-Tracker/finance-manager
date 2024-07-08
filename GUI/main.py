@@ -1,11 +1,10 @@
 import tkinter as tk
 from tkinter import ttk
-from model_transaction.balance import get_balance
 from GUI.home import HomePage
 from GUI.currency_convert import CurrencyConvertPage
-from GUI.files_reader import FilesReaderPage
-from GUI.report import TransactionReportApp
-from GUI.debt_plans import DebtsPlanPage  # Import the DebtsPlanPage class
+from GUI.debt_plans import DebtsPlanPage
+from GUI.side_buttons import SideButtons
+from model_transaction.balance import get_balance
 
 class Home(tk.Tk):
     def __init__(self, user_info):
@@ -13,29 +12,36 @@ class Home(tk.Tk):
 
         self.title("Finance Manager")
         
-        # Center window on screen and set size
-        window_width = 1250
-        window_height = 720
-        screen_width = self.winfo_screenwidth()
-        screen_height = self.winfo_screenheight()
-        x_position = int((screen_width - window_width) / 2)
-        y_position = int((screen_height - window_height) / 2)
-        self.geometry(f"{window_width}x{window_height}+{x_position}+{y_position}")
+        # Maximize the window and keep the title bar and exit button visible
+        self.state('zoomed')
 
         self.user_info = user_info  # Store user_info for later use in the class
 
         # Create header frame
         self.create_header()
-        
-        # Create main container for frames
+
+        # Main container for frames
         self.main_container = ttk.Frame(self)
         self.main_container.pack(fill="both", expand=True)
 
+        self.main_container.grid_rowconfigure(0, weight=2)
+        self.main_container.grid_rowconfigure(1, weight=1)
+        self.main_container.grid_columnconfigure(0, weight=1)
+        self.main_container.grid_columnconfigure(1, weight=2)
+
+        # Side buttons frame on the left
+        self.side_buttons = SideButtons(self.main_container, self)
+        self.side_buttons.grid(row=1, column=0, sticky="ns")
+
+        # Frame for pages on the right
+        self.pages_container = ttk.Frame(self.main_container)
+        self.pages_container.grid(row=1, column=1, sticky="nsew")
+
         # Create frames for each page
         self.frames = {}
-        for F in (HomePage, CurrencyConvertPage, FilesReaderPage, DebtsPlanPage):  # Add DebtsPlanPage
+        for F in (HomePage, CurrencyConvertPage, DebtsPlanPage):
             page_name = F.__name__
-            frame = F(parent=self.main_container, controller=self)
+            frame = F(parent=self.pages_container, controller=self)
             self.frames[page_name] = frame
             frame.grid(row=0, column=0, sticky="nsew")
 
@@ -54,18 +60,9 @@ class Home(tk.Tk):
 
         currency_button = ttk.Button(nav_frame, text="Currency Convert", command=lambda: self.show_frame("CurrencyConvertPage"))
         currency_button.pack(side="left", padx=5)
-
-        files_button = ttk.Button(nav_frame, text="Files Reader", command=lambda: self.show_frame("FilesReaderPage"))
-        files_button.pack(side="left", padx=5)
-
-        report_button = ttk.Button(nav_frame, text="Report", command=self.open_report)
-        report_button.pack(side="left", padx=5)
         
-        debts_button = ttk.Button(nav_frame, text="Debts Plan", command=lambda: self.show_frame("DebtsPlanPage"))  # Add button for DebtsPlanPage
+        debts_button = ttk.Button(nav_frame, text="Debts Plan", command=lambda: self.show_frame("DebtsPlanPage"))
         debts_button.pack(side="left", padx=5)
-
-        voice_button = ttk.Button(nav_frame, text="Voice", command=lambda: self.show_frame("DebtsPlanPage"))  # Add button for DebtsPlanPage
-        voice_button.pack(side="left", padx=5)
 
         # User info on the right
         user_info_frame = ttk.Frame(header_frame)
@@ -77,9 +74,6 @@ class Home(tk.Tk):
         self.balance_label = ttk.Label(user_info_frame, text=f"Balance: ${self.user_info['balance']:.2f}")
         self.balance_label.pack(side="right", padx=5)
 
-    def open_report(self):
-        TransactionReportApp(self.user_info['id'])
-
     def update_balance_label(self):
         self.user_info['balance'] = get_balance(self.user_info['id'])
         self.balance_label.config(text=f"Balance: ${self.user_info['balance']:.2f}")
@@ -87,4 +81,3 @@ class Home(tk.Tk):
     def show_frame(self, page_name):
         frame = self.frames[page_name]
         frame.tkraise()
-

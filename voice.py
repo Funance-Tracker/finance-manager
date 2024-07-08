@@ -18,10 +18,10 @@ class VoiceCommandApp(tk.Tk):
 
         instructions_text = (
             "Available Commands:\n\n"
-            "1. To show your transactions, say 'Show me my transactions'.\n"
-            "2. To show your balance, say 'Show me my balance'.\n"
-            "3. To show your debts, say 'Show me my debts'.\n"
-            "4. To show your information, say 'Show me my information'."
+            "1. To show your transactions, say 'Show my transactions'.\n"
+            "2. To show your balance, say 'Show my balance'.\n"
+            "3. To show your debts, say 'Show my debts'.\n"
+            "4. To show your information, say 'Show my information'."
         )
         self.instructions_label = tk.Label(self, text=instructions_text, font=("Century", 12), justify="left")
         self.instructions_label.pack(pady=20)
@@ -46,13 +46,13 @@ class VoiceCommandApp(tk.Tk):
             command = recognizer.recognize_google(audio)
             self.result_label.config(text=f"Command: {command}")
 
-            if "show me my transactions" in command.lower():
+            if "show my transactions" in command.lower():
                 self.show_transactions()
-            elif "show me my balance" in command.lower():
+            elif "show my balance" in command.lower():
                 self.show_balance()
-            elif "show me my debts" in command.lower():
+            elif "show my debts" in command.lower():
                 self.show_debts()
-            elif "show me my information" in command.lower():
+            elif "show my information" in command.lower():
                 self.show_user_info()
             else:
                 self.result_label.config(text="Command not recognized.")
@@ -140,7 +140,7 @@ class VoiceCommandApp(tk.Tk):
         user_info = self.fetch_user_info()
         if user_info:
             username, email, password = user_info
-            messagebox.showinfo("User Information", f"Username: {username}\nEmail: {email}\nPassword: {password}")
+            messagebox.showinfo("User Information", f"Username: {username}\nEmail: {email}")
         else:
             messagebox.showerror("Error", "Failed to fetch user information.")
 
