@@ -104,8 +104,3 @@ class TransactionReportApp(tk.Tk):
         except Exception as e:
             print(f"Error downloading transactions: {e}")
             return False
-
-if __name__ == "__main__":
-    user_id = 6  # Example user ID, replace with actual user ID
-    app = TransactionReportApp(user_id)
-    app.mainloop()
