@@ -2,34 +2,35 @@ import tkinter as tk
 from tkinter import ttk, messagebox
 from features.api import fetch_data, convert
 
-
 class CurrencyConvertPage(ttk.Frame):
     def __init__(self, parent, controller):
         super().__init__(parent)
         self.controller = controller
         self.data = fetch_data()
 
-        label = ttk.Label(self, text="Currency Convert")
-        label.pack(pady=10, padx=10)
+        style = ttk.Style()
+        style.configure("LimeGreen.TButton", background="#32CD32", foreground="#32CD32")
+        style.configure("Form.TLabel", font=("Arial", 14))
+        style.configure("Form.TLabelframe.Label", font=("Arial", 18, "bold"))
 
         # Currency Conversion Form
         convert_frame = ttk.LabelFrame(self, text="Currency Conversion")
-        convert_frame.pack(fill="x", padx=10, pady=10)
+        convert_frame.place(x=0, y=0, relwidth=1, relheight=1)
 
-        ttk.Label(convert_frame, text="Amount in JOD:").pack(side="left", padx=5, pady=5)
+        ttk.Label(convert_frame, text="Amount in JOD:", style="Form.TLabel").place(x=0, y=100)
         self.amount_entry = ttk.Entry(convert_frame)
-        self.amount_entry.pack(side="left", padx=5, pady=5)
+        self.amount_entry.place(x=250, y=100, width=200, height=24)  # Adjusted x position
 
-        ttk.Label(convert_frame, text="To Currency:").pack(side="left", padx=5, pady=5)
+        ttk.Label(convert_frame, text="To Currency:", style="Form.TLabel").place(x=0, y=200)
         self.to_currency_var = tk.StringVar(value='USD')  # Set default value to USD
         self.to_currency_dropdown = ttk.Combobox(convert_frame, textvariable=self.to_currency_var, values=list(self.data.keys()))
-        self.to_currency_dropdown.pack(side="left", padx=5, pady=5)
+        self.to_currency_dropdown.place(x=250, y=200, width=200, height=24)  # Adjusted x position
 
-        self.convert_button = ttk.Button(convert_frame, text="Convert", command=self.convert_currency)
-        self.convert_button.pack(side="left", padx=5, pady=5)
+        self.convert_button = ttk.Button(convert_frame, text="Convert", command=self.convert_currency, style="LimeGreen.TButton")
+        self.convert_button.place(x=150, y=250, width=150)  # Adjusted x position
 
-        self.result_label = ttk.Label(convert_frame, text="")
-        self.result_label.pack(side="left", padx=5, pady=5)
+        self.result_label = ttk.Label(convert_frame, text="", style="Form.TLabel")
+        self.result_label.place(x=20, y=300)  # Adjusted x position
 
     def convert_currency(self):
         try:

@@ -15,6 +15,26 @@ class DebtsPlanPage(ttk.Frame):
         label = ttk.Label(self, text="Debts Plans")
         label.pack(pady=10, padx=10)
 
+        # Frame for Debts Table
+        self.table_frame = ttk.Frame(self)
+        self.table_frame.pack(fill="both", expand=True, padx=10, pady=10)
+
+        # Debts Table
+        self.tree = ttk.Treeview(self.table_frame, columns=("amount", "description"), show="headings")
+        self.tree.heading("amount", text="Amount", anchor=tk.CENTER, command=lambda: self.sort_column(self.tree, "amount", False))
+        self.tree.heading("description", text="Description", anchor=tk.CENTER)
+        self.tree.column("amount", width=100, anchor=tk.CENTER)
+        self.tree.column("description", width=300, anchor=tk.CENTER)
+        self.tree.pack(fill="both", expand=True)
+
+        # Styling the header
+        self.tree["style"] = "mystyle.Treeview"
+        style = ttk.Style()
+        style.configure("mystyle.Treeview.Heading", font=("Arial", 12, "bold"))
+
+        # Generate initial debts table
+        self.populate_debts_table()
+
         # Amount Entry Frame
         amount_frame = ttk.LabelFrame(self, text="Payment Amount")
         amount_frame.pack(fill="x", padx=10, pady=10)
@@ -26,24 +46,26 @@ class DebtsPlanPage(ttk.Frame):
         self.generate_button = ttk.Button(amount_frame, text="Generate Plans", command=self.generate_plans)
         self.generate_button.pack(side="left", padx=5, pady=5)
 
+        # Frame for Generated Plans
+        self.plans_frame = ttk.Frame(self)
+        
         # Refresh Button
         self.refresh_button = ttk.Button(amount_frame, text="Refresh", command=self.refresh_page)
         self.refresh_button.pack(side="left", padx=5, pady=5)
 
-        # Result Frame
-        self.result_frame = ttk.Frame(self)
-        self.result_frame.pack(fill="both", expand=True, padx=10, pady=10)
+    def populate_debts_table(self):
+        # Clear existing items in the tree
+        for item in self.tree.get_children():
+            self.tree.delete(item)
 
-        # Generate initial plans based on the user's balance
-        self.generate_initial_plans()
-
-    def generate_initial_plans(self):
-        try:
-            user_id = self.user_info['id']
-            balance = get_balance(user_id)
-            self.generate_plans_based_on_amount(balance)
-        except Exception as e:
-            messagebox.showerror("Error", f"An error occurred: {e}")
+        user_id = self.user_info['id']
+        debts = self.get_debts(user_id)
+        
+        if not debts:
+            ttk.Label(self.tree, text="You have no debts to pay off.").pack()
+        else:
+            for debt in debts:
+                self.tree.insert("", "end", values=(debt[0], debt[1]))
 
     def generate_plans(self):
         try:
@@ -55,11 +77,16 @@ class DebtsPlanPage(ttk.Frame):
                 messagebox.showerror("Error", "The amount exceeds your available balance.")
                 return
             
-            # Clear previous results
-            for widget in self.result_frame.winfo_children():
+            # Clear previous results (remove plans frame content)
+            for widget in self.plans_frame.winfo_children():
                 widget.destroy()
 
+            # Generate plans and display them
             self.generate_plans_based_on_amount(amount)
+            
+            # Show plans frame
+            self.plans_frame.pack(fill="both", expand=True, padx=10, pady=10)
+
         except ValueError:
             messagebox.showerror("Input Error", "Please enter a valid amount.")
 
@@ -67,26 +94,26 @@ class DebtsPlanPage(ttk.Frame):
         user_id = self.user_info['id']
         debts = self.get_debts(user_id)
         if not debts:
-            ttk.Label(self.result_frame, text="You have no debts to pay off.").pack()
+            ttk.Label(self.plans_frame, text="You have no debts to pay off.").pack()
             return
 
         # Generate payment plans
         plans = self.create_payment_plans(debts, amount)
         if not plans:
-            ttk.Label(self.result_frame, text="The amount is insufficient to create a payment plan.").pack()
+            ttk.Label(self.plans_frame, text="The amount is insufficient to create a payment plan.").pack()
         else:
             for plan in plans:
                 total_plan_amount = sum(amt for amt, desc in plan)
 
                 if total_plan_amount <= amount:
-                    plan_frame = ttk.Frame(self.result_frame)
+                    plan_frame = ttk.Frame(self.plans_frame)
                     plan_frame.pack(fill="x", padx=5, pady=5)
 
                     plan_text = ", ".join([f"{amt} ({desc})" for amt, desc in plan])
                     plan_label = ttk.Label(plan_frame, text=plan_text)
                     plan_label.pack(side="left", padx=5, pady=5)
 
-                    pay_button = ttk.Button(plan_frame, text="Pay this plan", command=lambda p=plan: self.pay_plan(p, plan_frame), style="Green.TButton")
+                    pay_button = ttk.Button(plan_frame, text="Pay this plan", command=lambda p=plan: self.pay_plan(p, plan_frame))
                     pay_button.pack(side="right", padx=5, pady=5)
                 else:
                     # Skip displaying plans that exceed the entered amount
@@ -164,7 +191,15 @@ class DebtsPlanPage(ttk.Frame):
                 db.close()
 
     def refresh_page(self):
-        self.amount_entry.delete(0, tk.END)
-        for widget in self.result_frame.winfo_children():
-            widget.destroy()
-        self.generate_initial_plans()
+        # Re-create the debts table view
+        self.populate_debts_table()
+
+        # Hide plans frame
+        self.plans_frame.pack_forget()
+
+    def sort_column(self, tree, col, reverse):
+        data = [(tree.set(child, col), child) for child in tree.get_children('')]
+        data.sort(reverse=reverse)
+
+        for index, (val, child) in enumerate(data):
+            tree.move(child, '', index)

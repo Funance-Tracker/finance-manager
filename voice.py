@@ -9,6 +9,7 @@ import tkinter as tk
 from tkinter import messagebox
 import speech_recognition as sr
 from PostgresDB.postgres_db import PostgresDB
+from GUI.report import TransactionReportApp
 
 class VoiceCommandApp(tk.Tk):
     def __init__(self, user_id):
@@ -18,7 +19,7 @@ class VoiceCommandApp(tk.Tk):
 
         instructions_text = (
             "Available Commands:\n\n"
-            "1. To show your transactions, say 'Show my transactions'.\n"
+            "1. To show your transactions, say 'Show report'.\n"
             "2. To show your balance, say 'Show my balance'.\n"
             "3. To show your debts, say 'Show my debts'.\n"
             "4. To show your information, say 'Show my information'."
@@ -46,7 +47,7 @@ class VoiceCommandApp(tk.Tk):
             command = recognizer.recognize_google(audio)
             self.result_label.config(text=f"Command: {command}")
 
-            if "show my transactions" in command.lower():
+            if "show report" in command.lower():
                 self.show_transactions()
             elif "show my balance" in command.lower():
                 self.show_balance()
@@ -123,9 +124,10 @@ class VoiceCommandApp(tk.Tk):
             return None
 
     def show_transactions(self):
-        transactions = self.fetch_transactions()
-        transactions_text = "\n".join([f"Amount: {amount}, Description: {description}" for amount, description in transactions])
-        messagebox.showinfo("Transactions", transactions_text if transactions_text else "No transactions found.")
+        TransactionReportApp(self.user_id)
+        # transactions = self.fetch_transactions()
+        # transactions_text = "\n".join([f"Amount: {amount}, Description: {description}" for amount, description in transactions])
+        # messagebox.showinfo("Transactions", transactions_text if transactions_text else "No transactions found.")
 
     def show_balance(self):
         balance = self.fetch_balance()

@@ -53,10 +53,21 @@ class TransactionReportApp(tk.Tk):
         return sum(amount for amount, _ in self.transactions)
 
     def create_widgets(self):
+        # Create a style
+        style = ttk.Style(self)
+        
+        # Configure the Treeview header font and style
+        style.configure("Treeview.Heading", font=("Arial", 14, "bold"))
+
         # Create the Treeview for transactions
         self.tree = ttk.Treeview(self, columns=("Amount", "Description"), show="headings")
         self.tree.heading("Amount", text="Amount")
         self.tree.heading("Description", text="Description")
+
+        # Center the data in the columns
+        self.tree.column("Amount", anchor=tk.CENTER)
+        self.tree.column("Description", anchor=tk.CENTER)
+
         self.tree.pack(fill=tk.BOTH, expand=True)
 
         # Insert transactions into the Treeview
@@ -64,7 +75,7 @@ class TransactionReportApp(tk.Tk):
             self.tree.insert("", "end", values=(amount, description))
 
         # Create the total label
-        self.total_label = tk.Label(self, text=f"Total: {self.total}")
+        self.total_label = tk.Label(self, text=f"Total: {self.total}", font=("Arial", 28))
         self.total_label.pack()
 
         # Button to download transactions
@@ -93,8 +104,3 @@ class TransactionReportApp(tk.Tk):
         except Exception as e:
             print(f"Error downloading transactions: {e}")
             return False
-
-if __name__ == "__main__":
-    user_id = 6  # Example user ID, replace with actual user ID
-    app = TransactionReportApp(user_id)
-    app.mainloop()
