@@ -12,35 +12,29 @@ class FinanceManagerApp(tk.Tk):
         # Maximize the window and keep the title bar and exit button visible
         self.state('zoomed')
 
-        # Create main frame
-        main_frame = ttk.Frame(self)
-        main_frame.pack(fill="both", expand=True)
-
-        # Container for login/register forms
-        form_container = ttk.Frame(main_frame)
-        form_container.pack(fill="both", expand=True)
+        self.main_frame = ttk.Frame(self)
+        self.main_frame.pack(fill="both", expand=True)
 
         # Initially show the login form
         self.show_login()
 
     def show_login(self):
-        # Destroy current frame if exists
+        # Destroy current frame if it exists
         if hasattr(self, "current_frame"):
             self.current_frame.destroy()
 
-        # Create login form
-        self.current_frame = LoginApp(self)
+        # Create and display login form
+        self.current_frame = LoginApp(self.main_frame, self)
         self.current_frame.pack(fill="both", expand=True)
 
     def show_register(self):
-        # Destroy current frame if exists
+        # Destroy current frame if it exists
         if hasattr(self, "current_frame"):
             self.current_frame.destroy()
 
-        # Create register form
-        self.current_frame = RegisterApp(self)
+        # Create and display register form
+        self.current_frame = RegisterApp(self.main_frame, self)
         self.current_frame.pack(fill="both", expand=True)
-
 
 def main():
     app = FinanceManagerApp()
